@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Sanne Traint</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Sanne Traint">
+<meta name="theme-color" content="#7C3AED">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #FAF8FF;
+  --surface: #FFFFFF;
+  --surface2: #F3EFFF;
+  --surface3: #E9E2FF;
+  --border: rgba(124,58,237,0.12);
+  --border2: rgba(124,58,237,0.25);
+  --text: #1A0A2E;
+  --muted: #7B6F99;
+  --muted2: #A89FC4;
+  --accent: #7C3AED;
+  --accent-l: #EDE9FF;
+  --accent-m: #9D6FF5;
+  --accent2: #DB2777;
+  --accent2-l: #FDE8F3;
+  --green: #059669;
+  --green-l: #D1FAE5;
+  --amber: #B45309;
+  --amber-l: #FEF3C7;
+  --danger: #DC2626;
+  --danger-l: #FEE2E2;
+  --r: 16px;
+  --rs: 10px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;max-width:480px;margin:0 auto;padding-bottom:90px;overflow-x:hidden}
+
+/* ── Header ── */
+.hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 18px 0;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(124,58,237,0.07)}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.hdr h1{font-family:'Playfair Display',serif;font-size:20px;font-weight:600;letter-spacing:-0.3px;color:var(--accent)}
+.hdr h1 span{font-style:italic;font-weight:400}
+.week-chip{font-size:11px;font-weight:500;padding:4px 10px;border-radius:20px;background:var(--accent-l);color:var(--accent)}
+.nav{display:flex}
+.nav-btn{flex:1;background:none;border:none;border-bottom:2.5px solid transparent;padding:9px 2px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .15s;white-space:nowrap}
+.nav-btn.on{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* ── Pages ── */
+.pg{display:none;padding:16px}
+.pg.on{display:block}
+
+/* ── Cards ── */
+.card{background:var(--surface);border-radius:var(--r);border:1px solid var(--border);padding:15px;margin-bottom:11px;box-shadow:0 2px 8px rgba(124,58,237,0.05)}
+.card-hd{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.card-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:600}
+.card-sub{font-size:12px;color:var(--muted);margin-top:2px}
+
+/* ── Badges ── */
+.badge{font-size:11px;font-weight:500;padding:3px 9px;border-radius:20px;display:inline-block}
+.b-purple{background:var(--accent-l);color:var(--accent)}
+.b-pink{background:var(--accent2-l);color:var(--accent2)}
+.b-green{background:var(--green-l);color:var(--green)}
+.b-amber{background:var(--amber-l);color:var(--amber)}
+.b-red{background:var(--danger-l);color:var(--danger)}
+
+/* ── Buttons ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;background:none;border:1px solid var(--border2);border-radius:var(--rs);padding:8px 14px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--text);cursor:pointer;transition:all .12s;white-space:nowrap}
+.btn:active{opacity:.7;transform:scale(.97)}
+.btn-p{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn-pink{background:var(--accent2);border-color:var(--accent2);color:#fff}
+.btn-d{color:var(--danger);border-color:rgba(220,38,38,.25)}
+.btn-sm{padding:5px 10px;font-size:12px}
+.btn-full{width:100%}
+.btn-ghost{border-color:transparent;color:var(--muted)}
+
+/* ── Forms ── */
+.fg{margin-bottom:13px}
+.lbl{display:block;font-size:11px;font-weight:500;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.6px}
+input[type=text],input[type=number],input[type=date],select,textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);padding:10px 12px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--text);appearance:none;-webkit-appearance:none}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent-m);background:var(--surface)}
+textarea{resize:vertical;min-height:68px}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237B6F99' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+.row{display:flex;gap:10px}
+.row .fg{flex:1}
+
+/* ── Stats ── */
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:14px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:11px 8px;text-align:center}
+.stat-v{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--accent);display:block;line-height:1}
+.stat-l{font-size:10px;color:var(--muted);margin-top:3px;display:block}
+
+/* ── Section header ── */
+.sh{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px;margin-top:4px}
+.sh-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:600}
+
+/* ── Timer ── */
+.timer-wrap{background:linear-gradient(135deg,var(--accent),var(--accent-m));border-radius:var(--r);padding:16px 18px;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;box-shadow:0 4px 16px rgba(124,58,237,0.3)}
+.timer-num{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:#fff;letter-spacing:2px}
+.timer-lbl{font-size:11px;color:rgba(255,255,255,.75);margin-bottom:2px}
+.timer-dag{font-size:13px;font-weight:500;color:#fff;margin-top:2px}
+.kcal-badge{background:rgba(255,255,255,.18);border-radius:10px;padding:8px 12px;text-align:center}
+.kcal-val{font-size:18px;font-weight:700;color:#fff}
+.kcal-lbl{font-size:10px;color:rgba(255,255,255,.75)}
+
+/* ── Blok headers ── */
+.blok-hdr{display:flex;align-items:center;gap:10px;margin:16px 0 8px}
+.blok-icon{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.blok-warmup{background:#FEF3C7;color:#B45309}
+.blok-botprikkel{background:#FCE7F3;color:#BE185D}
+.blok-kracht{background:var(--accent-l);color:var(--accent)}
+.blok-core{background:var(--green-l);color:var(--green)}
+.blok-info{font-size:13px;font-weight:500}
+.blok-sub{font-size:11px;color:var(--muted)}
+
+/* ── Oefening card ── */
+.oef-card{background:var(--surface);border-radius:var(--r);border:1px solid var(--border);padding:13px;margin-bottom:9px}
+.oef-name{font-weight:500;font-size:15px;margin-bottom:4px}
+.oef-plan{font-size:11px;color:var(--muted);margin-bottom:8px}
+.oef-start{font-size:11px;color:var(--accent);margin-bottom:8px;font-style:italic}
+
+/* ── Sets tabel ── */
+.sets-tbl{width:100%;border-collapse:collapse;font-size:12px}
+.sets-tbl th{color:var(--muted);font-weight:500;font-size:10px;text-transform:uppercase;letter-spacing:.5px;padding:4px 3px;text-align:center;border-bottom:1px solid var(--border)}
+.sets-tbl td{padding:5px 3px;text-align:center;border-bottom:1px solid var(--border)}
+.sets-tbl tr:last-child td{border-bottom:none}
+.sets-tbl td:first-child{text-align:left;color:var(--muted);font-size:11px;width:24px}
+.sets-tbl input{width:48px;padding:6px 3px;font-size:13px;text-align:center;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text)}
+.sets-tbl input:focus{border-color:var(--accent-m);background:var(--surface);outline:none}
+.sets-tbl input.rir-inp{width:40px;background:#F0FDF4;border-color:rgba(5,150,105,.3)}
+.prev-row td{background:var(--accent-l);color:var(--accent);font-size:11px;padding:4px;border-radius:4px}
+
+/* ── Core oefening ── */
+.core-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+.core-item:last-child{border-bottom:none}
+.core-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--border2);background:var(--surface2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .15s}
+.core-check.done{background:var(--green);border-color:var(--green)}
+.core-check.done::after{content:'✓';color:#fff;font-size:12px;font-weight:700}
+.core-text{font-size:13px;flex:1}
+.core-detail{font-size:11px;color:var(--muted);margin-top:1px}
+
+/* ── Warming up item ── */
+.warmup-item{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px}
+.warmup-item:last-child{border-bottom:none}
+.warmup-dot{width:6px;height:6px;border-radius:50%;background:var(--amber);flex-shrink:0}
+
+/* ── Sprong teller ── */
+.sprong-wrap{background:var(--accent2-l);border-radius:var(--rs);padding:12px 14px;margin-top:6px}
+.sprong-title{font-size:12px;font-weight:500;color:var(--accent2);margin-bottom:8px}
+.sprong-sets{display:flex;gap:6px;flex-wrap:wrap}
+.sprong-btn{padding:6px 12px;border-radius:20px;border:1px solid var(--accent2);background:var(--surface);color:var(--accent2);font-size:12px;font-weight:500;cursor:pointer}
+.sprong-btn.done{background:var(--accent2);color:#fff}
+
+/* ── 12-weken progress ── */
+.twaalf-bar{height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;margin:8px 0 4px}
+.twaalf-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-m));border-radius:3px;transition:width .4s}
+.wk-dots{display:flex;gap:0}
+.wk-dot{flex:1;height:16px;display:flex;align-items:center;justify-content:center;font-size:8px;color:var(--muted)}
+.wk-dot.done{color:var(--accent);font-weight:700}
+.wk-dot.cur{color:var(--accent2);font-weight:700}
+
+/* ── Dag kaart dashboard ── */
+.dag-card{background:var(--surface);border-radius:var(--r);border:1px solid var(--border);padding:14px;margin-bottom:10px;cursor:pointer;transition:all .12s;box-shadow:0 2px 8px rgba(124,58,237,0.05)}
+.dag-card:active{transform:scale(.98)}
+.dag-card.vandaag{border-color:var(--accent);border-width:2px;background:var(--accent-l)}
+.dag-naam{font-weight:600;font-size:15px}
+.dag-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.dag-meta{font-size:11px;margin-top:6px;display:flex;gap:6px;flex-wrap:wrap}
+
+/* ── Progressie chart ── */
+.prog-wrap{display:flex;align-items:flex-end;gap:3px;height:90px;margin:10px 0 4px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px}
+.bar-inner{width:100%;border-radius:4px 4px 0 0;min-height:3px;background:linear-gradient(180deg,var(--accent-m),var(--accent))}
+.bar-dt{font-size:9px;color:var(--muted);text-align:center;line-height:1.2}
+.bar-vl{font-size:9px;font-weight:500;text-align:center;color:var(--accent)}
+
+/* ── Modal ── */
+.modal-ov{display:none;position:fixed;inset:0;background:rgba(26,10,46,.5);z-index:200;align-items:flex-end;justify-content:center}
+.modal-ov.on{display:flex}
+.modal{background:var(--surface);border-radius:var(--r) var(--r) 0 0;padding:20px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
+.modal-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.modal-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:600}
+.x-btn{background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted);padding:4px;line-height:1}
+.drag-bar{width:36px;height:4px;border-radius:2px;background:var(--surface3);margin:0 auto 16px}
+
+/* ── FAB ── */
+.fab{position:fixed;bottom:22px;right:18px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-m));color:#fff;border:none;font-size:26px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 18px rgba(124,58,237,.45);z-index:150;transition:transform .12s}
+.fab:active{transform:scale(.92)}
+
+/* ── Active banner ── */
+.act-banner{background:linear-gradient(135deg,var(--accent),var(--accent-m));color:#fff;border-radius:var(--r);padding:13px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;box-shadow:0 4px 12px rgba(124,58,237,.3)}
+.act-banner .btn{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.3);color:#fff;font-size:12px;padding:6px 12px}
+
+/* ── Feeling ── */
+.feel-row{display:flex;gap:7px;margin-top:6px}
+.feel-btn{flex:1;border:1px solid var(--border);border-radius:var(--rs);background:var(--surface2);padding:9px 4px;font-size:20px;text-align:center;cursor:pointer;transition:all .12s}
+.feel-btn.on{background:var(--accent-l);border-color:var(--accent-m)}
+
+/* ── History ── */
+.hist-item{padding:12px 0;border-bottom:1px solid var(--border)}
+.hist-item:last-child{border-bottom:none}
+.hist-date{font-size:11px;color:var(--muted);margin-bottom:3px}
+.hist-name{font-weight:500;font-size:14px}
+.hist-meta{font-size:12px;color:var(--muted);margin-top:2px}
+
+/* ── RIR legenda ── */
+.rir-info{font-size:11px;color:var(--muted);background:var(--surface2);border-radius:var(--rs);padding:8px 10px;margin-bottom:8px}
+
+/* ── Empty ── */
+.empty{text-align:center;padding:36px 16px;color:var(--muted)}
+.empty-ico{font-size:32px;margin-bottom:8px}
+.empty p{font-size:13px;line-height:1.6}
+
+/* ── Divider ── */
+.divider{height:1px;background:var(--border);margin:12px 0}
+.mt8{margin-top:8px}
+.mt12{margin-top:12px}
+.mt16{margin-top:16px}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-top">
+    <h1>Sanne <span>Traint</span> 💜</h1>
+    <span class="week-chip" id="week-chip">Week —</span>
+  </div>
+  <div class="nav">
+    <button class="nav-btn on" onclick="goto('dashboard')">Vandaag</button>
+    <button class="nav-btn" onclick="goto('sessie')">Sessie</button>
+    <button class="nav-btn" onclick="goto('historie')">Historie</button>
+    <button class="nav-btn" onclick="goto('progressie')">Progressie</button>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="pg-dashboard" class="pg on">
+  <div style="padding-top:14px"></div>
+  <div id="act-banner"></div>
+  <div id="dash-stats" class="stats"></div>
+  <div id="twaalf-blok"></div>
+  <div class="sh"><span class="sh-title">Trainingsweek</span></div>
+  <div id="dag-overzicht"></div>
+  <div style="display:flex;gap:8px;margin-top:8px">
+    <button class="btn btn-full" style="font-size:12px;padding:10px" onclick="exportData()">⬇ Backup</button>
+    <button class="btn btn-full" style="font-size:12px;padding:10px" onclick="importData()">⬆ Herstel</button>
+  </div>
+</div>
+
+<!-- SESSIE -->
+<div id="pg-sessie" class="pg">
+  <div style="padding-top:14px"></div>
+  <div id="sessie-wrap"></div>
+</div>
+
+<!-- HISTORIE -->
+<div id="pg-historie" class="pg">
+  <div style="padding-top:14px"></div>
+  <div class="sh"><span class="sh-title">Recente trainingen</span></div>
+  <div id="hist-list"></div>
+</div>
+
+<!-- PROGRESSIE -->
+<div id="pg-progressie" class="pg">
+  <div style="padding-top:14px"></div>
+  <div class="fg">
+    <label class="lbl">Trainingsdag</label>
+    <select id="prog-dag" onchange="progFilterDag()">
+      <option value="">Alle oefeningen</option>
+      <option>Maandag — Benen & billen A</option>
+      <option>Dinsdag — Bovenlichaam A</option>
+      <option>Donderdag — Benen & billen B</option>
+      <option>Zaterdag — Bovenlichaam B</option>
+    </select>
+  </div>
+  <div class="fg">
+    <label class="lbl">Oefening</label>
+    <select id="prog-oef" onchange="renderProg()"><option value="">— selecteer —</option></select>
+  </div>
+  <div id="prog-out"></div>
+</div>
+
+<button class="fab" id="fab" onclick="fabClick()">+</button>
+
+<!-- MODAL: Dag kiezen -->
+<div class="modal-ov" id="m-start">
+  <div class="modal">
+    <div class="drag-bar"></div>
+    <div class="modal-hd"><span class="modal-title">Welke dag train je?</span><button class="x-btn" onclick="close_m('m-start')">✕</button></div>
+    <div id="start-list"></div>
+  </div>
+</div>
+
+<!-- MODAL: Sessie afronden -->
+<div class="modal-ov" id="m-eind">
+  <div class="modal">
+    <div class="drag-bar"></div>
+    <div class="modal-hd"><span class="modal-title">Training afronden 💜</span><button class="x-btn" onclick="close_m('m-eind')">✕</button></div>
+    <div class="fg">
+      <label class="lbl">Hoe voelde je je?</label>
+      <div class="feel-row">
+        <div class="feel-btn" data-v="1" onclick="setFeel(1)">😓</div>
+        <div class="feel-btn" data-v="2" onclick="setFeel(2)">😐</div>
+        <div class="feel-btn" data-v="3" onclick="setFeel(3)">🙂</div>
+        <div class="feel-btn" data-v="4" onclick="setFeel(4)">💪</div>
+        <div class="feel-btn" data-v="5" onclick="setFeel(5)">🔥</div>
+      </div>
+    </div>
+    <div class="fg">
+      <label class="lbl">Opmerkingen / klachten</label>
+      <textarea id="eind-notitie" placeholder="Hoe ging het? Pijnpunten? Techniek?"></textarea>
+    </div>
+    <button class="btn btn-p btn-full" style="padding:13px;font-size:15px" onclick="finishSessie()">Opslaan ✓</button>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════
+   SCHEMA DATA
+═══════════════════════════════ */
+const SCHEMA = {
+  ma: {
+    naam: 'Maandag — Benen & billen A',
+    kort: 'Benen & billen A',
+    dag: 'Maandag',
+    emoji: '🦵',
+    kleur: '#7C3AED',
+    warmup: [
+      '5 minuten stevig wandelen',
+      'Traplopen',
+      'Miniband side walks: 1 × 12 per kant',
+      '1–2 lichte opwarmsets Smith squat'
+    ],
+    botprikkel: { sets: 3, reps: '10–20', opbouw: 'Start 3×10, bouw op naar 3×20' },
+    kracht: [
+      { naam: 'Smith machine squat', sets: 3, reps: '6–8', startKg: 15 },
+      { naam: 'Booty Builder', sets: 3, reps: '6–8', startKg: 30 },
+      { naam: 'Leg press', sets: 3, reps: '8–10', startKg: 40 },
+      { naam: 'Leg extension', sets: 2, reps: '8–10', startKg: 25 },
+      { naam: 'Abductor', sets: 3, reps: '6–8', startKg: 60 }
+    ],
+    core: 'A'
+  },
+  di: {
+    naam: 'Dinsdag — Bovenlichaam A + benen',
+    kort: 'Bovenlichaam A',
+    dag: 'Dinsdag',
+    emoji: '💪',
+    kleur: '#DB2777',
+    warmup: [
+      '5 minuten wandelen',
+      'Schouders losmaken',
+      '1–2 lichte opwarmsets Vertical Traction'
+    ],
+    botprikkel: { sets: 3, reps: '10', opbouw: 'Alleen als Ma/Do goed gaat (week 5+)' },
+    kracht: [
+      { naam: 'Vertical traction', sets: 3, reps: '8–10', startKg: 20 },
+      { naam: 'Chest press', sets: 3, reps: '8–10', startKg: 10 },
+      { naam: 'Low row', sets: 3, reps: '8–10', startKg: 25 },
+      { naam: 'Shoulder press', sets: 2, reps: '8–10', startKg: null },
+      { naam: 'Triceps arm extension', sets: 2, reps: '10–12', startKg: null },
+      { naam: 'Biceps curl', sets: 2, reps: '10–12', startKg: null }
+    ],
+    aanvullend: [
+      { naam: 'Leg curl (aanvullend)', sets: 2, reps: '12–15', startKg: 20 },
+      { naam: 'Cable side kick (aanvullend)', sets: 2, reps: '12–15', startKg: 7.5 }
+    ],
+    core: 'B'
+  },
+  do: {
+    naam: 'Donderdag — Benen & billen B',
+    kort: 'Benen & billen B',
+    dag: 'Donderdag',
+    emoji: '🍑',
+    kleur: '#7C3AED',
+    warmup: [
+      '5 minuten stevig wandelen',
+      'Traplopen',
+      'Miniband side walks: 1 × 12 per kant',
+      'Lichte hip-hinge opwarmsets'
+    ],
+    botprikkel: { sets: 3, reps: '10–20', opbouw: 'Volgens opbouwschema' },
+    kracht: [
+      { naam: 'Romanian deadlift', sets: 3, reps: '8–10', startKg: null, nieuw: true },
+      { naam: 'Supported split squat', sets: 2, reps: '8–10', startKg: null, lw: true },
+      { naam: 'Leg curl', sets: 3, reps: '8–10', startKg: 25 },
+      { naam: 'Booty Builder', sets: 2, reps: '8–10', startKg: 30 },
+      { naam: 'Cable back kick', sets: 2, reps: '10–12', startKg: 7.5 },
+      { naam: 'Adductor', sets: 2, reps: '10–12', startKg: 45 }
+    ],
+    core: 'A'
+  },
+  za: {
+    naam: 'Zaterdag — Bovenlichaam B + benen',
+    kort: 'Bovenlichaam B',
+    dag: 'Zaterdag',
+    emoji: '🏋️',
+    kleur: '#DB2777',
+    warmup: [
+      '5 minuten wandelen',
+      'Schouders losmaken',
+      '1–2 lichte opwarmsets Rear Delt Row'
+    ],
+    botprikkel: { sets: 3, reps: '10', opbouw: 'Alleen als Ma/Do goed gaat (week 5+)' },
+    kracht: [
+      { naam: 'Rear delt row', sets: 3, reps: '8–12', startKg: 17.5 },
+      { naam: 'Lat machine', sets: 3, reps: '8–10', startKg: null },
+      { naam: 'Pectoral', sets: 2, reps: '10–12', startKg: 15 },
+      { naam: 'Lateral raise', sets: 2, reps: '10–15', startKg: null },
+      { naam: 'Triceps arm extension', sets: 2, reps: '10–12', startKg: null },
+      { naam: 'Biceps curl', sets: 2, reps: '10–12', startKg: null }
+    ],
+    aanvullend: [
+      { naam: 'Leg press (aanvullend)', sets: 2, reps: '12–15', startKg: 40 },
+      { naam: 'Hip bridge (aanvullend)', sets: 2, reps: '15', startKg: null, lw: true }
+    ],
+    core: 'B'
+  }
+};
+
+const CORE_A = [
+  { naam: 'Dead bug', detail: '8–10 per kant' },
+  { naam: 'Pallof press', detail: '10 per kant' },
+  { naam: 'Onderarmplank met voet opzij', detail: '30–45 seconden' },
+  { naam: 'Bird dog', detail: '8 per kant' }
+];
+const CORE_B = [
+  { naam: 'Hoge plank, knie naar elleboog', detail: '30–45 seconden' },
+  { naam: 'Side plank links + rechts', detail: '20–40 seconden per kant' },
+  { naam: 'Pallof press', detail: '8–10 per kant' },
+  { naam: 'Dead bug', detail: '8–10 per kant' }
+];
+
+const DAGEN = ['ma','di','do','za'];
+const DAG_NAMEN_LANG = {ma:'Maandag',di:'Dinsdag',do:'Donderdag',za:'Zaterdag'};
+
+/* ═══════════════════════════════
+   DATABASE
+═══════════════════════════════ */
+const KEY = 'sanne_v1';
+function loadDB(){try{return JSON.parse(localStorage.getItem(KEY))||defDB()}catch{return defDB()}}
+function saveDB(){localStorage.setItem(KEY,JSON.stringify(db))}
+function defDB(){return{sessions:[],startDatum:null,sprongVoortgang:{}}}
+let db = loadDB();
+let actSess = null;
+let timerInt = null;
+let feelVal = 3;
+let coreStatus = {};
+let sprongStatus = {};
+
+/* ═══════════════════════════════
+   NAVIGATIE
+═══════════════════════════════ */
+const pages = ['dashboard','sessie','historie','progressie'];
+function goto(p){
+  document.querySelectorAll('.pg').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('on'));
+  document.getElementById('pg-'+p).classList.add('on');
+  document.querySelectorAll('.nav-btn')[pages.indexOf(p)].classList.add('on');
+  document.getElementById('fab').style.display = p==='historie'||p==='progressie' ? 'none' : 'flex';
+  document.getElementById('fab').textContent = actSess ? '⏹' : '+';
+  if(p==='dashboard') renderDash();
+  if(p==='sessie') renderSessie();
+  if(p==='historie') renderHistorie();
+  if(p==='progressie') renderProgPage();
+  setWeekChip();
+}
+function fabClick(){if(actSess)goto('sessie');else openStartModal()}
+
+function setWeekChip(){
+  if(!db.startDatum){document.getElementById('week-chip').textContent='Week —';return}
+  const diff=Math.floor((Date.now()-new Date(db.startDatum).getTime())/(7*24*3600*1000));
+  const wk=Math.min(Math.max(diff+1,1),12);
+  document.getElementById('week-chip').textContent='Week '+wk+'/12';
+}
+
+function getCurWeek(){
+  if(!db.startDatum)return 1;
+  const diff=Math.floor((Date.now()-new Date(db.startDatum).getTime())/(7*24*3600*1000));
+  return Math.min(Math.max(diff+1,1),12);
+}
+
+/* ═══════════════════════════════
+   DASHBOARD
+═══════════════════════════════ */
+function renderDash(){
+  setWeekChip();
+  const all=db.sessions;
+  const now=new Date();
+  const thisWk=all.filter(s=>(now-new Date(s.datum))<7*24*3600*1000);
+
+  document.getElementById('dash-stats').innerHTML=`
+    <div class="stat"><span class="stat-v">${all.length}</span><span class="stat-l">Sessies</span></div>
+    <div class="stat"><span class="stat-v">${thisWk.length}</span><span class="stat-l">Deze week</span></div>
+    <div class="stat"><span class="stat-v">${getCurWeek()}</span><span class="stat-l">Week cyclus</span></div>`;
+
+  // Active banner
+  const ab=document.getElementById('act-banner');
+  if(actSess){
+    const dag=SCHEMA[actSess.dagKey];
+    ab.innerHTML=`<div class="act-banner"><div><div style="font-size:11px;opacity:.75">Actieve training</div><div style="font-weight:500">${dag.emoji} ${dag.kort}</div></div><button class="btn btn-sm" onclick="goto('sessie')">Ga verder ›</button></div>`;
+  }else ab.innerHTML='';
+
+  // 12-weken blok
+  const wk=getCurWeek();
+  const pct=Math.round((wk/12)*100);
+  const zwEl=document.getElementById('twaalf-blok');
+  if(db.startDatum){
+    zwEl.innerHTML=`<div class="card" style="margin-bottom:14px">
+      <div class="card-hd"><div><div class="card-title" style="font-size:14px">12-weken schema</div><div class="card-sub">Gestart: ${new Date(db.startDatum).toLocaleDateString('nl-NL',{day:'numeric',month:'long'})}</div></div><span class="badge b-purple">Week ${wk}/12</span></div>
+      <div class="twaalf-bar"><div class="twaalf-fill" style="width:${pct}%"></div></div>
+      <div class="wk-dots">${Array.from({length:12},(_,i)=>{const w=i+1;return`<div class="wk-dot${w<wk?' done':w===wk?' cur':''}">${w}</div>`}).join('')}</div>
+    </div>`;
+  }else{
+    zwEl.innerHTML=`<div class="card" style="margin-bottom:14px;border:2px dashed var(--border2)">
+      <div style="text-align:center;padding:8px 0">
+        <div style="font-size:13px;color:var(--muted);margin-bottom:10px">Stel de startdatum van je 12-weken schema in</div>
+        <div class="fg" style="margin:0"><input type="date" id="start-datum-inp" value="${new Date().toISOString().split('T')[0]}"></div>
+        <button class="btn btn-p mt8" onclick="setStartDatum()">Schema starten 💜</button>
+      </div>
+    </div>`;
+  }
+
+  // Dag overzicht
+  const dagEl=document.getElementById('dag-overzicht');
+  const todayDow=new Date().getDay(); // 0=zo,1=ma,...
+  const dowMap={1:'ma',2:'di',4:'do',6:'za'};
+  const vandaagKey=dowMap[todayDow]||null;
+
+  dagEl.innerHTML=DAGEN.map(key=>{
+    const dag=SCHEMA[key];
+    const isVandaag=key===vandaagKey;
+    const recentSess=all.filter(s=>s.dagKey===key).slice(-1)[0];
+    const laast=recentSess?new Date(recentSess.datum).toLocaleDateString('nl-NL',{day:'numeric',month:'short'}):'nog niet getraind';
+    return`<div class="dag-card${isVandaag?' vandaag':''}" onclick="startVanDag('${key}')">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <div class="dag-naam">${dag.emoji} ${dag.kort}</div>
+          <div class="dag-sub">${dag.dag} · ${dag.kracht.length}${dag.aanvullend?'+'+dag.aanvullend.length:''} oefeningen</div>
+        </div>
+        ${isVandaag?'<span class="badge b-purple">Vandaag</span>':''}
+      </div>
+      <div class="dag-meta">
+        <span class="badge" style="background:var(--surface2);color:var(--muted)">Laatste: ${laast}</span>
+        <span class="badge" style="background:var(--surface2);color:var(--muted)">Core ${dag.core}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setStartDatum(){
+  const v=document.getElementById('start-datum-inp').value;
+  if(!v)return;
+  db.startDatum=v;
+  saveDB();
+  renderDash();
+  setWeekChip();
+}
+
+/* ═══════════════════════════════
+   SESSIE STARTEN
+═══════════════════════════════ */
+function openStartModal(){
+  const el=document.getElementById('start-list');
+  el.innerHTML=DAGEN.map(key=>{
+    const dag=SCHEMA[key];
+    return`<div onclick="startSessie('${key}')" style="display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--border);cursor:pointer">
+      <div style="width:40px;height:40px;border-radius:12px;background:${dag.kleur}22;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">${dag.emoji}</div>
+      <div style="flex:1">
+        <div style="font-weight:500;font-size:14px">${dag.kort}</div>
+        <div style="font-size:12px;color:var(--muted)">${dag.dag} · ${dag.kracht.length} krachtoefeningen</div>
+      </div>
+      <span style="color:var(--muted);font-size:20px">›</span>
+    </div>`;
+  }).join('');
+  open_m('m-start');
+}
+
+function startVanDag(key){
+  if(actSess){goto('sessie');return}
+  startSessie(key);
+}
+
+function startSessie(key){
+  close_m('m-start');
+  const dag=SCHEMA[key];
+  const alleOefs=[...dag.kracht,...(dag.aanvullend||[])];
+  actSess={dagKey:key,startTime:Date.now(),sets:{},gevoel:3,notitie:''};
+  alleOefs.forEach(o=>{actSess.sets[o.naam]=[]});
+  coreStatus={};
+  sprongStatus={done:0,totaal:dag.botprikkel.sets};
+  clearInterval(timerInt);
+  timerInt=setInterval(()=>updTimer(),1000);
+  goto('sessie');
+}
+
+/* ═══════════════════════════════
+   SESSIE RENDEREN
+═══════════════════════════════ */
+function renderSessie(){
+  const el=document.getElementById('sessie-wrap');
+  if(!actSess){el.innerHTML=`<div class="empty"><div class="empty-ico">💜</div><p>Geen actieve training.<br>Druk op + om te starten.</p></div>`;return}
+  const dag=SCHEMA[actSess.dagKey];
+  const kcal=estimateKcal();
+
+  let html=`<div class="timer-wrap">
+    <div>
+      <div class="timer-lbl">Duur</div>
+      <div class="timer-num" id="timer-num">00:00</div>
+      <div class="timer-dag">${dag.emoji} ${dag.kort}</div>
+    </div>
+    <div class="kcal-badge">
+      <div class="kcal-val" id="kcal-val">${kcal}</div>
+      <div class="kcal-lbl">kcal ~</div>
+    </div>
+  </div>`;
+
+  // Warming-up
+  html+=`<div class="blok-hdr"><div class="blok-icon blok-warmup">🌡️</div><div><div class="blok-info">Warming-up</div><div class="blok-sub">5–10 minuten</div></div></div>
+  <div class="card" style="padding:12px 14px">
+    ${dag.warmup.map(w=>`<div class="warmup-item"><div class="warmup-dot"></div><span>${w}</span></div>`).join('')}
+  </div>`;
+
+  // Botprikkel
+  html+=`<div class="blok-hdr"><div class="blok-icon blok-botprikkel">🦴</div><div><div class="blok-info">Botprikkel — lage sprongen</div><div class="blok-sub">${dag.botprikkel.opbouw}</div></div></div>
+  <div class="card" style="padding:12px 14px">
+    <div class="sprong-wrap">
+      <div class="sprong-title">Week ${getCurWeek()} — ${dag.botprikkel.sets} × ${dag.botprikkel.reps} sprongen</div>
+      <div class="sprong-sets">
+        ${Array.from({length:dag.botprikkel.sets},(_,i)=>`<div class="sprong-btn${sprongStatus[i]?' done':''}" onclick="toggleSprong(${i})">Set ${i+1}</div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+
+  // Krachtoefeningen
+  html+=`<div class="blok-hdr"><div class="blok-icon blok-kracht">💜</div><div><div class="blok-info">Krachttraining</div><div class="blok-sub">2–3 min rust · grote oefeningen</div></div></div>`;
+  html+=`<div class="rir-info">💡 RIR = Reps in Reserve. Hoeveel herhalingen kon je nog? 1–3 is ideaal.</div>`;
+
+  dag.kracht.forEach(oef=>{
+    html+=renderOefCard(oef);
+  });
+
+  if(dag.aanvullend&&dag.aanvullend.length){
+    html+=`<div class="blok-hdr"><div class="blok-icon blok-kracht" style="background:var(--accent2-l);color:var(--accent2)">➕</div><div><div class="blok-info">Aanvullend — benen</div><div class="blok-sub">Lichter · 60–90 sec rust</div></div></div>`;
+    dag.aanvullend.forEach(oef=>{html+=renderOefCard(oef)});
+  }
+
+  // Core
+  const coreOefs=dag.core==='A'?CORE_A:CORE_B;
+  html+=`<div class="blok-hdr"><div class="blok-icon blok-core">🌿</div><div><div class="blok-info">Core ${dag.core} — 2 rondes</div><div class="blok-sub">Korte rust naar behoefte</div></div></div>
+  <div class="card" style="padding:12px 14px">
+    ${coreOefs.map((c,i)=>`<div class="core-item">
+      <div class="core-check${coreStatus[i]?' done':''}" id="core-${i}" onclick="toggleCore(${i})"></div>
+      <div><div class="core-text">${c.naam}</div><div class="core-detail">${c.detail}</div></div>
+    </div>`).join('')}
+  </div>`;
+
+  html+=`<button class="btn btn-p btn-full mt12" style="padding:14px;font-size:15px" onclick="openEind()">Training afronden 💜</button>`;
+  el.innerHTML=html;
+  updTimer();
+}
+
+function renderOefCard(oef){
+  const sets=actSess.sets[oef.naam]||[];
+  const prev=getPrev(oef.naam);
+  const sid=slugify(oef.naam);
+  const startInfo=oef.lw?'Lichaamsgewicht':oef.startKg?`Start: ${oef.startKg} kg`:oef.nieuw?'Nieuw — licht beginnen':'';
+
+  return`<div class="oef-card">
+    <div class="oef-name">${oef.naam}</div>
+    <div class="oef-plan">${oef.sets} sets × ${oef.reps} reps</div>
+    ${startInfo?`<div class="oef-start">${startInfo}</div>`:''}
+    <table class="sets-tbl">
+      <thead><tr><th>#</th><th>Kg</th><th>Reps</th><th>RIR</th><th></th></tr></thead>
+      <tbody id="tb-${sid}">
+        ${prev?`<tr class="prev-row"><td colspan="5">Vorige: ${prev}</td></tr>`:''}
+        ${sets.map((s,i)=>`<tr>
+          <td style="color:var(--muted);font-size:11px">${i+1}</td>
+          <td><input type="number" inputmode="decimal" step="0.5" value="${s.kg||''}" placeholder="—" onchange="updSet('${esc(oef.naam)}',${i},'kg',this.value)"></td>
+          <td><input type="number" inputmode="numeric" value="${s.reps||''}" placeholder="—" onchange="updSet('${esc(oef.naam)}',${i},'reps',this.value)"></td>
+          <td><input type="number" inputmode="numeric" class="rir-inp" value="${s.rir||''}" placeholder="—" min="0" max="10" onchange="updSet('${esc(oef.naam)}',${i},'rir',this.value)"></td>
+          <td><button class="btn btn-ghost btn-sm" onclick="delSet('${esc(oef.naam)}',${i})">✕</button></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+    <button class="btn btn-sm mt8" onclick="addSet('${esc(oef.naam)}')">+ Set</button>
+  </div>`;
+}
+
+function esc(s){return s.replace(/'/g,"\\'")}
+function slugify(s){return s.replace(/[^a-zA-Z0-9]/g,'_')}
+function pad(n){return String(n).padStart(2,'0')}
+
+function addSet(oef){
+  if(!actSess.sets[oef])actSess.sets[oef]=[];
+  const prev=getPrevSets(oef);
+  const last=prev[prev.length-1]||{};
+  actSess.sets[oef].push({kg:last.kg||'',reps:last.reps||'',rir:''});
+  renderSessie();
+}
+function delSet(oef,i){actSess.sets[oef].splice(i,1);renderSessie()}
+function updSet(oef,i,f,v){if(actSess.sets[oef])actSess.sets[oef][i][f]=v}
+
+function toggleCore(i){
+  coreStatus[i]=!coreStatus[i];
+  const el=document.getElementById('core-'+i);
+  if(el)el.classList.toggle('done',coreStatus[i]);
+}
+function toggleSprong(i){
+  sprongStatus[i]=!sprongStatus[i];
+  renderSessie();
+}
+
+function getPrev(oef){
+  const prev=db.sessions.slice().reverse().find(s=>s.sets&&s.sets[oef]&&s.sets[oef].length);
+  if(!prev)return null;
+  const s=prev.sets[oef];const last=s[s.length-1];
+  return`${s.length}x ${last.kg||'—'}kg × ${last.reps||'—'}${last.rir!==undefined&&last.rir!==''?' (RIR '+last.rir+')':''}`;
+}
+function getPrevSets(oef){
+  const prev=db.sessions.slice().reverse().find(s=>s.sets&&s.sets[oef]&&s.sets[oef].length);
+  return prev?prev.sets[oef]:[];
+}
+
+function estimateKcal(){
+  if(!actSess)return 0;
+  return Math.round((Date.now()-actSess.startTime)/60000*5);
+}
+function updTimer(){
+  const el=document.getElementById('timer-num');
+  if(!el||!actSess)return;
+  const elapsed=Math.floor((Date.now()-actSess.startTime)/1000);
+  const h=Math.floor(elapsed/3600),m=Math.floor((elapsed%3600)/60),s=elapsed%60;
+  el.textContent=h?`${h}:${pad(m)}:${pad(s)}`:`${pad(m)}:${pad(s)}`;
+  const kv=document.getElementById('kcal-val');
+  if(kv)kv.textContent=estimateKcal();
+}
+
+/* ═══════════════════════════════
+   SESSIE AFRONDEN
+═══════════════════════════════ */
+function openEind(){
+  feelVal=3;
+  document.querySelectorAll('.feel-btn').forEach(b=>b.classList.remove('on'));
+  document.querySelector('.feel-btn[data-v="3"]').classList.add('on');
+  document.getElementById('eind-notitie').value='';
+  open_m('m-eind');
+}
+function setFeel(v){feelVal=v;document.querySelectorAll('.feel-btn').forEach(b=>b.classList.toggle('on',parseInt(b.dataset.v)===v))}
+
+function finishSessie(){
+  if(!actSess)return;
+  clearInterval(timerInt);
+  const sess={
+    id:'sess'+Date.now(),
+    datum:new Date().toISOString(),
+    dagKey:actSess.dagKey,
+    dagNaam:SCHEMA[actSess.dagKey].naam,
+    duur:Math.floor((Date.now()-actSess.startTime)/1000),
+    sets:actSess.sets,
+    kcal:estimateKcal(),
+    gevoel:feelVal,
+    notitie:document.getElementById('eind-notitie').value.trim()
+  };
+  db.sessions.push(sess);saveDB();
+  actSess=null;coreStatus={};sprongStatus={};
+  close_m('m-eind');
+  document.getElementById('fab').textContent='+';
+  goto('dashboard');
+}
+
+/* ═══════════════════════════════
+   HISTORIE
+═══════════════════════════════ */
+function renderHistorie(){
+  const el=document.getElementById('hist-list');
+  const all=db.sessions;
+  if(!all.length){el.innerHTML=`<div class="empty"><div class="empty-ico">💜</div><p>Nog geen trainingen.<br>Druk op + om te starten!</p></div>`;return}
+  const feel=['','😓','😐','🙂','💪','🔥'];
+  el.innerHTML=all.slice().reverse().slice(0,15).map(s=>{
+    const dag=SCHEMA[s.dagKey]||{emoji:'🏋️'};
+    const d=new Date(s.datum).toLocaleDateString('nl-NL',{weekday:'short',day:'numeric',month:'short'});
+    const dur=fmtDur(s.duur);
+    const oefs=Object.keys(s.sets||{}).length;
+    return`<div class="card" style="padding:13px 14px">
+      <div class="hist-date">${d}</div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <div class="hist-name">${dag.emoji} ${s.dagNaam||s.dagKey}</div>
+          <div class="hist-meta">${dur} · ${oefs} oefeningen${s.kcal?' · ~'+s.kcal+' kcal':''}${s.gevoel?' · '+feel[s.gevoel]:''}</div>
+          ${s.notitie?`<div style="font-size:12px;color:var(--muted);margin-top:4px;font-style:italic">"${s.notitie}"</div>`:''}
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="delSess('${s.id}')">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function delSess(id){if(!confirm('Sessie verwijderen?'))return;db.sessions=db.sessions.filter(s=>s.id!==id);saveDB();renderHistorie()}
+function fmtDur(s){const m=Math.round(s/60);return m>=60?`${Math.floor(m/60)}u ${m%60}m`:`${m} min`}
+
+/* ═══════════════════════════════
+   PROGRESSIE
+═══════════════════════════════ */
+function renderProgPage(){progFilterDag()}
+function progFilterDag(){
+  const dagNaam=document.getElementById('prog-dag').value;
+  const oefSet=new Set();
+  db.sessions.forEach(s=>{
+    if(dagNaam&&s.dagNaam!==dagNaam)return;
+    Object.keys(s.sets||{}).forEach(o=>oefSet.add(o));
+  });
+  const sel=document.getElementById('prog-oef');
+  sel.innerHTML='<option value="">— selecteer oefening —</option>'+[...oefSet].sort().map(o=>`<option>${o}</option>`).join('');
+  document.getElementById('prog-out').innerHTML='';
+}
+
+function renderProg(){
+  const oef=document.getElementById('prog-oef').value;
+  const el=document.getElementById('prog-out');
+  if(!oef){el.innerHTML='';return}
+  const data=db.sessions.filter(s=>s.sets&&s.sets[oef]&&s.sets[oef].length).map(s=>{
+    const sets=s.sets[oef];
+    const maxKg=Math.max(...sets.map(x=>parseFloat(x.kg)||0));
+    const vol=sets.reduce((a,x)=>a+(parseFloat(x.kg)||0)*(parseInt(x.reps)||0),0);
+    const minRir=Math.min(...sets.filter(x=>x.rir!=='').map(x=>parseInt(x.rir)||99));
+    return{dt:new Date(s.datum).toLocaleDateString('nl-NL',{day:'numeric',month:'short'}),maxKg,vol:Math.round(vol),sets,minRir:minRir===99?null:minRir};
+  });
+  if(!data.length){el.innerHTML=`<div class="empty"><p>Nog geen data voor<br><strong>${oef}</strong></p></div>`;return}
+  const maxKg=Math.max(...data.map(d=>d.maxKg))||1;
+  const maxVol=Math.max(...data.map(d=>d.vol))||1;
+
+  el.innerHTML=`
+    <div class="card">
+      <div class="card-hd"><div class="card-title">Max gewicht</div><span class="badge b-purple">${data[data.length-1].maxKg} kg</span></div>
+      <div class="prog-wrap">
+        ${data.slice(-8).map(d=>{const h=Math.round((d.maxKg/maxKg)*78);return`<div class="bar-col"><div class="bar-vl">${d.maxKg}</div><div class="bar-inner" style="height:${h}px"></div><div class="bar-dt">${d.dt}</div></div>`}).join('')}
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><div class="card-title">Volume (kg × reps)</div><span class="badge b-pink">${data[data.length-1].vol}</span></div>
+      <div class="prog-wrap">
+        ${data.slice(-8).map(d=>{const h=Math.round((d.vol/maxVol)*78);return`<div class="bar-col"><div class="bar-vl">${d.vol}</div><div class="bar-inner" style="height:${h}px;background:linear-gradient(180deg,#F472B6,#DB2777)"></div><div class="bar-dt">${d.dt}</div></div>`}).join('')}
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:10px">Recente sets</div>
+      ${data.slice().reverse().slice(0,4).map(d=>`
+        <div class="hist-item">
+          <div class="hist-date">${d.dt}${d.minRir!==null?' · RIR '+d.minRir:''}</div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:4px">
+            ${d.sets.map((s,i)=>`<span class="badge b-purple">${i+1}: ${s.kg||'—'}kg×${s.reps||'—'}${s.rir!==''?' R'+s.rir:''}</span>`).join('')}
+          </div>
+        </div>`).join('')}
+    </div>`;
+}
+
+/* ═══════════════════════════════
+   BACKUP & RESTORE
+═══════════════════════════════ */
+function exportData(){
+  const payload={exportDatum:new Date().toISOString(),versie:'sanne_v1',data:{sessions:db.sessions,startDatum:db.startDatum}};
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='sanne-backup-'+new Date().toISOString().split('T')[0]+'.json';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+  showToast('Backup opgeslagen 💜');
+}
+function importData(){
+  const inp=document.createElement('input');inp.type='file';inp.accept='.json';
+  inp.onchange=function(e){
+    const file=e.target.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onload=function(ev){
+      try{
+        const p=JSON.parse(ev.target.result);
+        if(!p.data)throw new Error();
+        if(!confirm('Backup van '+((p.exportDatum||'').split('T')[0]||'?')+' terugzetten?'))return;
+        db.sessions=p.data.sessions||[];
+        db.startDatum=p.data.startDatum||null;
+        saveDB();showToast('Backup teruggezet 💜');renderDash();
+      }catch{alert('Ongeldig bestand.')}
+    };reader.readAsText(file);
+  };inp.click();
+}
+function showToast(msg){
+  const t=document.createElement('div');t.textContent=msg;
+  t.style.cssText='position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#7C3AED;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:500;z-index:999;white-space:nowrap;box-shadow:0 4px 16px rgba(124,58,237,.4)';
+  document.body.appendChild(t);setTimeout(()=>t.remove(),2500);
+}
+
+/* ═══════════════════════════════
+   MODAL HELPERS
+═══════════════════════════════ */
+function open_m(id){document.getElementById(id).classList.add('on')}
+function close_m(id){document.getElementById(id).classList.remove('on')}
+
+/* ── Init ── */
+setWeekChip();
+renderDash();
+</script>
+</body>
+</html>
