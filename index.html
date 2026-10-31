@@ -188,6 +188,9 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .fab{position:fixed;bottom:22px;right:18px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-m));color:#fff;border:none;font-size:26px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 18px rgba(124,58,237,.45);z-index:150;transition:transform .12s}
 .fab:active{transform:scale(.92)}
 
+/* ── Autosave melding ── */
+.autosave-note{font-size:11px;color:var(--muted);text-align:right;margin:-4px 2px 8px}
+
 /* ── Active banner ── */
 .act-banner{background:linear-gradient(135deg,var(--accent),var(--accent-m));color:#fff;border-radius:var(--r);padding:13px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;box-shadow:0 4px 12px rgba(124,58,237,.3)}
 .act-banner .btn{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.3);color:#fff;font-size:12px;padding:6px 12px}
@@ -309,7 +312,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
     </div>
     <div class="fg">
       <label class="lbl">Opmerkingen / klachten</label>
-      <textarea id="eind-notitie" placeholder="Hoe ging het? Pijnpunten? Techniek?"></textarea>
+      <textarea id="eind-notitie" placeholder="Hoe ging het? Pijnpunten? Techniek?" oninput="if(actSess){actSess.notitie=this.value;saveDraft()}"></textarea>
     </div>
     <button class="btn btn-p btn-full" style="padding:13px;font-size:15px" onclick="finishSessie()">Opslaan ✓</button>
   </div>
@@ -439,8 +442,18 @@ const DAG_NAMEN_LANG = {ma:'Maandag',di:'Dinsdag',do:'Donderdag',za:'Zaterdag'};
    DATABASE
 ═══════════════════════════════ */
 const KEY = 'sanne_v1';
-function loadDB(){try{return JSON.parse(localStorage.getItem(KEY))||defDB()}catch{return defDB()}}
-function saveDB(){localStorage.setItem(KEY,JSON.stringify(db))}
+const KEY_PREV = 'sanne_v1_prev';
+const KEY_DRAFT = 'sanne_v1_concept';
+function readJSON(k){try{const r=localStorage.getItem(k);return r?JSON.parse(r):null}catch(e){return null}}
+function loadDB(){return readJSON(KEY)||readJSON(KEY_PREV)||defDB()}
+function saveDB(){
+  try{
+    const oud=localStorage.getItem(KEY);
+    if(oud&&readJSON(KEY))localStorage.setItem(KEY_PREV,oud);
+    localStorage.setItem(KEY,JSON.stringify(db));
+    return true;
+  }catch(e){return false}
+}
 function defDB(){return{sessions:[],startDatum:null,sprongVoortgang:{}}}
 let db = loadDB();
 let actSess = null;
@@ -448,6 +461,39 @@ let timerInt = null;
 let feelVal = 3;
 let coreStatus = {};
 let sprongStatus = {};
+let lastSave = '';
+
+/* ── Autosave van de lopende training ── */
+function saveDraft(){
+  const note=document.getElementById('autosave-note');
+  try{
+    if(!actSess){localStorage.removeItem(KEY_DRAFT);return}
+    actSess.lastActive=Date.now();
+    localStorage.setItem(KEY_DRAFT,JSON.stringify({actSess:actSess,coreStatus:coreStatus,sprongStatus:sprongStatus,feelVal:feelVal}));
+    lastSave='\u2713 Automatisch bewaard '+new Date().toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'});
+    if(note)note.textContent=lastSave;
+  }catch(e){
+    lastSave='\u26A0 Bewaren mislukt, maak een backup';
+    if(note)note.textContent=lastSave;
+  }
+}
+function restoreDraft(){
+  const d=readJSON(KEY_DRAFT);
+  if(!d||!d.actSess||!SCHEMA[d.actSess.dagKey])return false;
+  const s=d.actSess;
+  const laatst=s.lastActive||s.startTime;
+  if((Date.now()-laatst)/3600000>12){
+    const datum=new Date(s.startTime).toLocaleDateString('nl-NL',{weekday:'long',day:'numeric',month:'long'});
+    if(!confirm('Er staat een onafgemaakte training van '+datum+' ('+SCHEMA[s.dagKey].kort+').\n\nOK = hervatten\nAnnuleren = weggooien')){
+      try{localStorage.removeItem(KEY_DRAFT)}catch(e){}
+      return false;
+    }
+    s.startTime=Date.now()-(laatst-s.startTime);
+  }
+  actSess=s;coreStatus=d.coreStatus||{};sprongStatus=d.sprongStatus||{};feelVal=d.feelVal||3;
+  clearInterval(timerInt);timerInt=setInterval(function(){updTimer()},1000);
+  return true;
+}
 
 /* ═══════════════════════════════
    NAVIGATIE
@@ -590,8 +636,10 @@ function startSessie(key){
   alleOefs.forEach(o=>{actSess.sets[o.naam]=[]});
   coreStatus={};
   sprongStatus={done:0,totaal:dag.botprikkel.sets};
+  feelVal=3;
   clearInterval(timerInt);
   timerInt=setInterval(()=>updTimer(),1000);
+  saveDraft();
   goto('sessie');
 }
 
@@ -614,7 +662,8 @@ function renderSessie(){
       <div class="kcal-val" id="kcal-val">${kcal}</div>
       <div class="kcal-lbl">kcal ~</div>
     </div>
-  </div>`;
+  </div>
+  <div class="autosave-note" id="autosave-note">${lastSave}</div>`;
 
   // Warming-up
   html+=`<div class="blok-hdr"><div class="blok-icon blok-warmup">🌡️</div><div><div class="blok-info">Warming-up</div><div class="blok-sub">5–10 minuten</div></div></div>
@@ -656,7 +705,8 @@ function renderSessie(){
     </div>`).join('')}
   </div>`;
 
-  html+=`<button class="btn btn-p btn-full mt12" style="padding:14px;font-size:15px" onclick="openEind()">Training afronden 💜</button>`;
+  html+=`<button class="btn btn-p btn-full mt12" style="padding:14px;font-size:15px" onclick="openEind()">Training afronden 💜</button>
+  <button class="btn btn-ghost btn-full mt8" onclick="annuleerSessie()">Training annuleren</button>`;
   el.innerHTML=html;
   updTimer();
 }
@@ -677,9 +727,9 @@ function renderOefCard(oef){
         ${prev?`<tr class="prev-row"><td colspan="5">Vorige: ${prev}</td></tr>`:''}
         ${sets.map((s,i)=>`<tr>
           <td style="color:var(--muted);font-size:11px">${i+1}</td>
-          <td><input type="number" inputmode="decimal" step="0.5" value="${s.kg||''}" placeholder="—" onchange="updSet('${esc(oef.naam)}',${i},'kg',this.value)"></td>
-          <td><input type="number" inputmode="numeric" value="${s.reps||''}" placeholder="—" onchange="updSet('${esc(oef.naam)}',${i},'reps',this.value)"></td>
-          <td><input type="number" inputmode="numeric" class="rir-inp" value="${s.rir||''}" placeholder="—" min="0" max="10" onchange="updSet('${esc(oef.naam)}',${i},'rir',this.value)"></td>
+          <td><input type="number" inputmode="decimal" step="0.5" value="${s.kg||''}" placeholder="—" oninput="updSet('${esc(oef.naam)}',${i},'kg',this.value)"></td>
+          <td><input type="number" inputmode="numeric" value="${s.reps||''}" placeholder="—" oninput="updSet('${esc(oef.naam)}',${i},'reps',this.value)"></td>
+          <td><input type="number" inputmode="numeric" class="rir-inp" value="${s.rir||''}" placeholder="—" min="0" max="10" oninput="updSet('${esc(oef.naam)}',${i},'rir',this.value)"></td>
           <td><button class="btn btn-ghost btn-sm" onclick="delSet('${esc(oef.naam)}',${i})">✕</button></td>
         </tr>`).join('')}
       </tbody>
@@ -697,18 +747,30 @@ function addSet(oef){
   const prev=getPrevSets(oef);
   const last=prev[prev.length-1]||{};
   actSess.sets[oef].push({kg:last.kg||'',reps:last.reps||'',rir:''});
+  saveDraft();
   renderSessie();
 }
-function delSet(oef,i){actSess.sets[oef].splice(i,1);renderSessie()}
-function updSet(oef,i,f,v){if(actSess.sets[oef])actSess.sets[oef][i][f]=v}
+function delSet(oef,i){actSess.sets[oef].splice(i,1);saveDraft();renderSessie()}
+function updSet(oef,i,f,v){if(actSess&&actSess.sets[oef]&&actSess.sets[oef][i]){actSess.sets[oef][i][f]=v;saveDraft()}}
+
+function annuleerSessie(){
+  if(!actSess)return;
+  if(!confirm('Training annuleren? Alles wat je hebt ingevuld wordt gewist.'))return;
+  clearInterval(timerInt);
+  actSess=null;coreStatus={};sprongStatus={};feelVal=3;
+  saveDraft();
+  goto('dashboard');
+}
 
 function toggleCore(i){
   coreStatus[i]=!coreStatus[i];
+  saveDraft();
   const el=document.getElementById('core-'+i);
   if(el)el.classList.toggle('done',coreStatus[i]);
 }
 function toggleSprong(i){
   sprongStatus[i]=!sprongStatus[i];
+  saveDraft();
   renderSessie();
 }
 
@@ -741,13 +803,11 @@ function updTimer(){
    SESSIE AFRONDEN
 ═══════════════════════════════ */
 function openEind(){
-  feelVal=3;
-  document.querySelectorAll('.feel-btn').forEach(b=>b.classList.remove('on'));
-  document.querySelector('.feel-btn[data-v="3"]').classList.add('on');
-  document.getElementById('eind-notitie').value='';
+  document.querySelectorAll('.feel-btn').forEach(b=>b.classList.toggle('on',parseInt(b.dataset.v)===feelVal));
+  document.getElementById('eind-notitie').value=(actSess&&actSess.notitie)||'';
   open_m('m-eind');
 }
-function setFeel(v){feelVal=v;document.querySelectorAll('.feel-btn').forEach(b=>b.classList.toggle('on',parseInt(b.dataset.v)===v))}
+function setFeel(v){feelVal=v;document.querySelectorAll('.feel-btn').forEach(b=>b.classList.toggle('on',parseInt(b.dataset.v)===v));saveDraft()}
 
 function finishSessie(){
   if(!actSess)return;
@@ -763,8 +823,15 @@ function finishSessie(){
     gevoel:feelVal,
     notitie:document.getElementById('eind-notitie').value.trim()
   };
-  db.sessions.push(sess);saveDB();
-  actSess=null;coreStatus={};sprongStatus={};
+  db.sessions.push(sess);
+  if(!saveDB()){
+    db.sessions.pop();
+    timerInt=setInterval(()=>updTimer(),1000);
+    alert('Opslaan is niet gelukt. Je training blijft bewaard als concept. Probeer het opnieuw of maak een backup.');
+    return;
+  }
+  actSess=null;coreStatus={};sprongStatus={};feelVal=3;
+  saveDraft();
   close_m('m-eind');
   document.getElementById('fab').textContent='+';
   goto('dashboard');
@@ -898,8 +965,15 @@ function open_m(id){document.getElementById(id).classList.add('on')}
 function close_m(id){document.getElementById(id).classList.remove('on')}
 
 /* ── Init ── */
+try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
 setWeekChip();
-renderDash();
+if(restoreDraft()){goto('sessie');showToast('Training hersteld 💜')}else{renderDash()}
+
+document.addEventListener('visibilitychange',function(){
+  if(document.visibilityState==='hidden')saveDraft();
+  else updTimer();
+});
+window.addEventListener('pagehide',saveDraft);
 </script>
 </body>
 </html>
